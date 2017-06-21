@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  	<script src='https://api.mapbox.com/mapbox-gl-js/v0.38.0/mapbox-gl.js'></script>
+	<link href='https://api.mapbox.com/mapbox-gl-js/v0.38.0/mapbox-gl.css' rel='stylesheet'/>
+	<style>
+		html body {
+			height:100vh;
+		}
+
+		#map{
+			width:100%;
+			height:100%;
+		}
+
+		.marker {
+		    background-image: url('./pb-logo2.png');
+		    background-size: cover;
+		    width: 50px;
+		    height: 50px;
+		    border-radius: 50%;
+		    cursor: pointer;
+		}
+
+		.description {
+			max-width: 300px;
+		}
+
+	</style>
+  </head>
+
+  <body style='display:flex; margin:0;'>
+  	<div id='map'></div>
+
+
+
+	<script>
+
+	var crdata = [
+	  {
+	    "Picture": "./Picture1.png",
+	    "Volunteer Event": "Share the Message READ!",
+	    "Location": "Appleton, Wisconsin",
+	    "Center":[-88.4601799,44.2832819],
+	    "Non-profit/School": "Head Start at Washington Early Learning Center",
+	    "Description": "Employee volunteers spent time at Washington Early Learning Center’s Head Start program performing our Share the Message READ! Program. The Share the Message READ! Program includes volunteers reading to the children and then helping them to make a craft that supports the books read. Our volunteers then gave each child a book of their own to take home. The team also sat down and shared Pizza with the children and their families."
+	  },
+	  {
+	    "Picture": "./Picture2.png",
+	    "Volunteer Event": "Working Bee in Acadia Ridge",
+	    "Location": "Brisbane,Australia",
+	    "Center":[152.7123346,-27.38125],
+	    "Non-profit/School": "Acacia Ridge Community Centre",
+	    "Description": "Employee volunteers teamed up with United Way to brighten up a well utilised community centre hall. \n\nThe “Heritage Hut” at the Acacia Ridge Community Centre is a vital resource for the local community which is both culturally and socially diverse. The Acacia Ridge Community Centre runs a large number of programs, including an employment assistance program, housing resource service, English language and literacy tutoring, and social enterprise activities. It also provides emergency relief, including food vouchers, and operates a Food Co-op. \n\nOur volunteers painted the hut a cheery yellow colour, with the assistance of trainees from a local Greening Australia project. The once drab and well-worn hut was transformed into a bright and clean space for the community to continue to enjoy for many years to come."
+	  },
+	  {
+	    "Picture": "./Picture3.png",
+	    "Volunteer Event": "Business to Books",
+	    "Location": "Stamford, CT",
+	    "Center":[-73.6356266,41.0983717],
+	    "Non-profit/School": "Stark Elementary School and the United Way of Western CT",
+	    "Description": "Employees volunteered their time (and reading skills!) to Kindergarten and First Grade classrooms at Stark Elementary School as part of the United Way of Western Connecticut's  “Business to Books” initiative. Each volunteer read up to 3 books to each classroom."
+	  },
+	  {
+	    "Picture": "./Picture4.png",
+	    "Volunteer Event": "Share the Message READ!",
+	    "Location": "Albany, NY",
+	    "Center":[-73.8465049,42.6681976],
+	    "Non-profit/School": "Arbor Hill Elementary School",
+	    "Description": "Employee volunteers headed over to Arbor Hill elementary school and read a book to each of the three kindergarten classes and the special education classroom. After reading, volunteers sat with the children to do a craft. The Spring theme included a reading of “The Best Nest” by Dr. Seuss, followed by the kids decorating their own wooden birdhouses. \n\nThis year we also had a new addition dubbed “The Party Room”, which rewarded sixteen top-performing 5th grade students as nominated by their teachers. They decorated birdhouses, had healthy snacks, and were each given their own copy of James Patterson’s “Middle School” chapter book to take home. This is our 7th visit to the Arbor Hill school,"
+	  },
+	  {
+	    "Picture": "./Picture5.png",
+	    "Volunteer Event": "Magic of Storytelling community playgroup",
+	    "Location": "Sydney, Australia",
+	    "Center":[150.651096,-33.8474012],
+	    "Non-profit/School": "Magic of Storytelling community playgroup",
+	    "Description": "Employee volunteers helped to set up the playgroup event, and then prepared food to serve before they participated in face painting, building blocks using Legos and craft table activities.\n\nTowards the end of the playgroup, our volunteers each read a book to the children. \n\nThe playgroup organizers proudly shared that with more than 50 families attending, this playgroup was their largest attended playgroup."
+	  }
+	];
+
+	mapboxgl.accessToken = 'pk.eyJ1IjoiZ3VvZXIyMyIsImEiOiJpYmU5MFp3In0.lm0nc3EaP-b1S6bWFFtjmg';
+
+	var map = new mapboxgl.Map({
+	    container: 'map',
+	    style: 'mapbox://styles/mapbox/light-v9',
+	    attributionControl :false,
+	    center:[-77.0353, 38.8895],
+	    zoom: 4
+	});
+
+
+	// map.on('load', function() {
+	// 	 map.addLayer({
+	//         "id": "places",
+	//         "type": "symbol",
+	//         "source": {
+	//             "type": "geojson",
+	//             "data": {
+	//                 "type": "FeatureCollection",
+	//                 "features":[] 
+	// 				}
+ //        		},
+	//         "layout": {
+	//             "icon-image": "{icon}-15",
+	//             "icon-allow-overlap": true
+	//         }
+ //    	});
+
+	crdata.forEach(function(e){
+
+				// create the popup
+		var popup = new mapboxgl.Popup({offset: 25,closeButton: false,
+        closeOnClick: false})
+		    .setHTML("<div class='description'><img src='"+e.Picture+"' style='width:100%'/><h2>"+e["Volunteer Event"]+"</h2><h3>"+e["Non-profit/School"]+"</h3>"+e.Description+"</div>");
+
+		// create DOM element for the marker
+		var el = document.createElement('div');
+		el.setAttribute('class','marker');
+
+		
+
+		var marker = new mapboxgl.Marker(el, {offset:[-25, -25]})
+		    .setLngLat(e.Center)
+		    .setPopup(popup) // sets a popup on this marker
+		    .addTo(map);
+
+		el.addEventListener("click", function(e){
+			e.preventDefault();
+			e.stopPropagation();
+		});
+
+		el.addEventListener("mouseover", function(e){
+			marker.togglePopup();
+		});
+		  
+		el.addEventListener("mouseout", function(e){
+			marker.togglePopup();
+		});  
+		
+	}); 
+
+
+	// map.on('mouseenter', 'places', function(e) {
+ //        // Change the cursor style as a UI indicator.
+ //        map.getCanvas().style.cursor = 'pointer';
+
+ //        // Populate the popup and set its coordinates
+ //        // based on the feature found.
+ //        popup.setLngLat(e.features[0].geometry.coordinates)
+ //            .setHTML(e.features[0].properties.description)
+ //            .addTo(map);
+ //    });
+
+ //    map.on('mouseleave', 'places', function() {
+ //        map.getCanvas().style.cursor = '';
+ //        popup.remove();
+ //    });
+
+  //});
+
+	</script>
+  </body>
+</html>
